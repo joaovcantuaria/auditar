@@ -1,0 +1,29 @@
+{
+  // Config de TYPE-CHECK usada APENAS no build de produção (Vercel / CI).
+  // Diferente do tsconfig.json de desenvolvimento, este arquivo:
+  //  - NÃO usa "references" (project references) ao @auditar/shared, evitando
+  //    o erro TS6306 (composite) que ocorria com `tsc -b` (build mode);
+  //  - resolve @auditar/shared pelo FONTE via "paths" (mesmo alias do Vite),
+  //    mantendo consistência entre o que o Vite empacota e o que o tsc checa;
+  //  - usa "noEmit": true — quem gera o bundle é o Vite; o tsc apenas valida tipos;
+  //  - EXCLUI arquivos de teste para não compilá-los no build (era a causa do
+  //    TS6133 em cpf.test.ts do shared quando o tsc -b compilava os testes).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "noEmit": true
+  },
+  "references": [],
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+    "src/test/**"
+  ]
+}

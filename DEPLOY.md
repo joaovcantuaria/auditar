@@ -31,7 +31,7 @@ git remote add origin https://github.com/SEU-USUARIO/auditar.git
 git push -u origin main
 ```
 
-> Confira que o `.gitignore` já ignora `.env`, `node_modules` e `dist`. **Nunca** comite segredos. Os arquivos `.env.production.example`, `render.yaml` e `apps/web/vercel.json` (criados por este guia) **devem** ir para o repositório — eles não contêm segredos.
+> Confira que o `.gitignore` já ignora `.env`, `node_modules` e `dist`. **Nunca** comite segredos. Os arquivos `.env.production.example`, `render.yaml` e `vercel.json` (na raiz, criados por este guia) **devem** ir para o repositório — eles não contêm segredos.
 
 ---
 
@@ -195,9 +195,9 @@ O frontend envia arquivos **direto do navegador para o R2** via presigned URL (m
 
 1. Em [vercel.com](https://vercel.com), clique em **Add New → Project** e importe o mesmo repositório do GitHub.
 2. **Root Directory:** deixe na **raiz do repositório** (não `apps/web`). Isso é necessário para o Vercel instalar os workspaces do monorepo e buildar o `@auditar/shared` antes do web.
-   - O arquivo **`apps/web/vercel.json`** já define:
+   - Com Root Directory = raiz, o Vercel lê o **`vercel.json` da RAIZ** do repositório (não o de `apps/web`). O arquivo **`vercel.json`** (raiz) já define:
      - `installCommand`: `npm ci`
-     - `buildCommand`: `npm run build --workspace @auditar/shared && npm run build --workspace @auditar/web`
+     - `buildCommand`: `npm run build --workspace @auditar/shared && npm run build --workspace @auditar/web` (builda **só** shared + web; a **API não é buildada** no Vercel — ela roda no Render)
      - `outputDirectory`: `apps/web/dist`
      - `rewrites`: todas as rotas → `/index.html` (para o React Router funcionar em URLs profundas)
    - Se o Vercel não aplicar automaticamente esses comandos (por causa do Root Directory), cole-os manualmente nas configurações de **Build & Development Settings**, com **Output Directory = `apps/web/dist`**.
@@ -267,7 +267,7 @@ Tudo abaixo cabe no **free tier** e é adequado para uma **demo**:
 ## Resumo dos arquivos deste deploy
 
 - `render.yaml` (raiz) — Blueprint do serviço da API no Render.
-- `apps/web/vercel.json` — build/rewrite do frontend na Vercel.
+- `vercel.json` (raiz) — build/rewrite do frontend na Vercel. Fica na **raiz** porque o Root Directory do projeto Vercel é a raiz do repo; buildCommand builda só `@auditar/shared` + `@auditar/web` (nunca a API). O build do web usa apenas `vite build` (sem type-check bloqueante); o type-check roda localmente/CI via `npm run typecheck:build --workspace @auditar/web`.
 - `.env.production.example` (raiz) — template de todas as variáveis de produção.
 - `apps/api/package.json` — novo script `prisma:migrate:deploy`.
 - Ajustes de código para provedores gerenciados (retrocompatíveis com o local):

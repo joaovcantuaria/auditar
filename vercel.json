@@ -1,0 +1,8 @@
+{
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build --workspace @auditar/shared && npm run build --workspace @auditar/web",
+  "outputDirectory": "apps/web/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

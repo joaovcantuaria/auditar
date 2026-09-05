@@ -6,11 +6,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "build:typecheck": "tsc -p tsconfig.build.json && vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
+    "typecheck:build": "tsc -p tsconfig.build.json",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rimraf dist"
   },
