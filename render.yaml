@@ -1,0 +1,148 @@
+# =============================================================================
+# Render Blueprint — API do sistema "Auditar" (DEMO / homologacao)
+# =============================================================================
+# Este arquivo descreve o servico web da API (Express + TypeScript) para deploy
+# no Render a partir do monorepo. O Render le este Blueprint automaticamente
+# ("New +" -> "Blueprint") e cria o servico com as configuracoes abaixo.
+#
+# IMPORTANTE:
+#  - NENHUM valor secreto fica neste arquivo. Todas as variaveis marcadas com
+#    `sync: false` DEVEM ser preenchidas manualmente no painel do Render
+#    (aba "Environment" do servico). Os comentarios indicam de onde vem cada
+#    valor. Veja DEPLOY.md para o passo a passo completo.
+#  - O plano `free` do Render "dorme" apos ~15 min de inatividade; a primeira
+#    requisicao apos dormir pode levar ~30s (cold start). Adequado para demo.
+# =============================================================================
+
+services:
+  - type: web
+    name: auditar-api
+    runtime: node
+    plan: free
+    # Regiao a criterio — escolha a mais proxima dos usuarios da demo.
+    region: oregon
+    branch: main
+
+    # -------------------------------------------------------------------------
+    # Build: instala deps do monorepo -> builda o shared (obrigatorio ANTES de
+    # api/web) -> gera o Prisma Client -> builda a API -> aplica as migrations
+    # em producao (migrate deploy, NUNCA migrate dev).
+    # -------------------------------------------------------------------------
+    buildCommand: >-
+      npm ci &&
+      npm run build --workspace @auditar/shared &&
+      npm run prisma:generate --workspace @auditar/api &&
+      npm run build --workspace @auditar/api &&
+      npm run prisma:migrate:deploy --workspace @auditar/api
+
+    # Start: `node dist/index.js` (script `start` do @auditar/api).
+    startCommand: npm run start --workspace @auditar/api
+
+    # Endpoint de health check (definido em app.ts, sem autenticacao).
+    healthCheckPath: /health
+
+    autoDeploy: true
+
+    envVars:
+      # --- Node ---------------------------------------------------------------
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+
+      # --- Rede / URLs --------------------------------------------------------
+      # A porta e injetada pelo Render via PORT; a API le env.API_PORT.
+      # Mapeamos PORT -> API_PORT abaixo.
+      - key: API_PORT
+        value: "10000"     # A API le env.API_PORT; o Render expoe a porta 10000 por padrao. Ver DEPLOY.md.
+      - key: API_URL
+        sync: false        # URL publica DESTE servico no Render (ex.: https://auditar-api.onrender.com)
+      - key: WEB_URL
+        sync: false        # URL do frontend no Vercel (ex.: https://auditar.vercel.app)
+
+      # --- Banco de dados: Neon ----------------------------------------------
+      - key: DATABASE_URL
+        sync: false        # Neon -> connection string com ?sslmode=require
+
+      # --- Redis: Upstash -----------------------------------------------------
+      # Upstash usa TLS (rediss://). Preencha host/porta/senha a partir da URL
+      # rediss://default:<senha>@<host>:<porta>. Habilite REDIS_TLS=true.
+      - key: REDIS_URL
+        sync: false        # Upstash -> rediss://default:<senha>@<host>:<porta>
+      - key: REDIS_HOST
+        sync: false        # Upstash -> host (ex.: xxx.upstash.io)
+      - key: REDIS_PORT
+        sync: false        # Upstash -> porta (ex.: 6379)
+      - key: REDIS_PASSWORD
+        sync: false        # Upstash -> senha (o "default" token)
+      - key: REDIS_TLS
+        value: "true"      # Upstash exige TLS
+
+      # --- Storage S3-compatible: Cloudflare R2 -------------------------------
+      # A lib `minio` usa host+port+useSSL. Para R2, informe SO o host do
+      # endpoint (sem https://), porta 443 e SSL true. MINIO_REGION=auto e
+      # necessario para presigned URLs no R2.
+      - key: MINIO_ENDPOINT
+        sync: false        # R2 -> <accountid>.r2.cloudflarestorage.com (sem https://)
+      - key: MINIO_PORT
+        value: "443"
+      - key: MINIO_USE_SSL
+        value: "true"
+      - key: MINIO_REGION
+        value: auto        # Obrigatorio para Cloudflare R2
+      - key: MINIO_ROOT_USER
+        sync: false        # R2 -> Access Key ID do API Token
+      - key: MINIO_ROOT_PASSWORD
+        sync: false        # R2 -> Secret Access Key do API Token
+      - key: MINIO_BUCKET_PROCESSOS
+        sync: false        # R2 -> nome do bucket de processos (ex.: auditar-processos)
+      - key: MINIO_BUCKET_RELATORIOS
+        sync: false        # R2 -> nome do bucket de relatorios (ex.: auditar-relatorios)
+
+      # --- JWT / Cripto -------------------------------------------------------
+      - key: JWT_SECRET
+        sync: false        # Gere 32+ chars: `openssl rand -base64 48`
+      - key: JWT_EXPIRES_IN
+        value: 1h
+      - key: JWT_LONG_EXPIRES_IN
+        value: 7d
+      - key: BCRYPT_ROUNDS
+        value: "12"
+
+      # --- SMTP: Resend -------------------------------------------------------
+      - key: SMTP_HOST
+        value: smtp.resend.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        value: resend       # Usuario fixo do Resend via SMTP
+      - key: SMTP_PASS
+        sync: false        # Resend -> API Key (re_...)
+      - key: SMTP_FROM_NAME
+        value: Auditar
+      - key: SMTP_FROM_ADDRESS
+        sync: false        # E-mail do dominio verificado no Resend (ou onboarding@resend.dev p/ teste)
+
+      # --- Feature flags ------------------------------------------------------
+      - key: FEATURE_SMS_ENABLED
+        value: "false"
+      - key: FEATURE_PUSH_ENABLED
+        value: "false"
+
+      # --- CORS ---------------------------------------------------------------
+      - key: CORS_ORIGINS
+        sync: false        # CSV com a(s) URL(s) do Vercel (ex.: https://auditar.vercel.app)
+
+      # --- Rate limit / Sessao ------------------------------------------------
+      - key: RATE_LIMIT_MAX
+        value: "100"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "60000"
+      - key: SERVER_SESSION_TIMEOUT_MIN
+        value: "60"
+      - key: CITIZEN_SESSION_TIMEOUT_MIN
+        value: "30"
+      - key: MAX_ADMINS
+        value: "3"

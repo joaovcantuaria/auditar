@@ -1,0 +1,219 @@
+src/app.ts(2,21): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/app.ts(3,20): error TS2307: Cannot find module 'helmet' or its corresponding type declarations.
+src/app.ts(4,18): error TS2307: Cannot find module 'cors' or its corresponding type declarations.
+src/app.ts(5,23): error TS2307: Cannot find module 'express-rate-limit' or its corresponding type declarations.
+src/app.ts(17,14): error TS7006: Parameter 'origin' implicitly has an 'any' type.
+src/app.ts(17,22): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+src/app.ts(45,21): error TS7006: Parameter '_req' implicitly has an 'any' type.
+src/app.ts(45,27): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/app.ts(53,10): error TS7006: Parameter '_req' implicitly has an 'any' type.
+src/app.ts(53,16): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/config/bullmq.ts(1,35): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/config/database.ts(1,30): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/config/mailer.ts(1,24): error TS2307: Cannot find module 'nodemailer' or its corresponding type declarations.
+src/config/minio.ts(1,39): error TS2307: Cannot find module 'minio' or its corresponding type declarations.
+src/config/redis.ts(1,19): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/config/redis.ts(13,20): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/jobs/index.ts(7,29): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/jobs/limpeza.worker.ts(12,34): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/jobs/notificacao.worker.ts(11,34): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/jobs/prazo.worker.ts(11,34): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/jobs/queues.ts(13,42): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/lib/__tests__/jwt.test.ts(2,17): error TS2307: Cannot find module 'jsonwebtoken' or its corresponding type declarations.
+src/lib/__tests__/jwt.test.ts(39,67): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+src/lib/jwt.ts(1,39): error TS2307: Cannot find module 'jsonwebtoken' or its corresponding type declarations.
+src/lib/jwt.ts(2,30): error TS2307: Cannot find module 'uuid' or its corresponding type declarations.
+src/middleware/__tests__/rateLimiter.test.ts(2,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/__tests__/rbac.test.ts(2,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/__tests__/sanitize.test.ts(2,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/auth.ts(1,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/auth.ts(2,28): error TS6059: File 'E:/Auditar/packages/shared/src/index.ts' is not under 'rootDir' 'E:/Auditar/apps/api/src'. 'rootDir' is expected to contain all source files.
+  The file is in the program because:
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/auth.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/csrf.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/rbac.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/sanitize.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/rateLimiter.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/__tests__/rbac.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.2fa.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/errors.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.schema.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/cpf.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.login.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.recuperacao.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.servidor.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/protocolo.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/diasUteis.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/paginacao.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.servidor.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.2fa.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.cidadao.login.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.cidadao.property.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.cidadao.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.lockout.property.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.recuperacao.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.servidor.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/categorias.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/categorias.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/categorias.router.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/__tests__/categorias.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/tipos.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/tipos.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/tipos.router.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/__tests__/tipos.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.schema.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.router.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/__tests__/unidades.service.test.ts'
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+src/middleware/auth.ts(2,28): error TS6307: File 'E:/Auditar/packages/shared/src/index.ts' is not listed within the file list of project 'E:/Auditar/apps/api/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/auth.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/csrf.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/rbac.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/sanitize.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/rateLimiter.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/middleware/__tests__/rbac.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.2fa.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/errors.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.schema.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/cpf.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.cidadao.login.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.recuperacao.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.servidor.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/protocolo.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/diasUteis.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/utils/paginacao.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/auth.servidor.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.2fa.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.cidadao.login.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.cidadao.property.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.cidadao.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.lockout.property.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.recuperacao.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/auth/__tests__/auth.servidor.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/categorias.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/categorias.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/categorias.router.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/categorias/__tests__/categorias.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/tipos.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/tipos.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/tipos.router.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/tipos-processo/__tests__/tipos.service.test.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.controller.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.schema.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.service.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/unidades.router.ts'
+    Imported via '@auditar/shared' from file 'E:/Auditar/apps/api/src/modules/unidades/__tests__/unidades.service.test.ts'
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+src/middleware/csrf.ts(1,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/rateLimiter.ts(1,15): error TS2300: Duplicate identifier 'Request'.
+src/middleware/rateLimiter.ts(1,24): error TS2300: Duplicate identifier 'Response'.
+src/middleware/rateLimiter.ts(1,34): error TS2300: Duplicate identifier 'NextFunction'.
+src/middleware/rateLimiter.ts(1,48): error TS2300: Duplicate identifier 'RequestHandler'.
+src/middleware/rateLimiter.ts(1,70): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/rateLimiter.ts(2,15): error TS2300: Duplicate identifier 'Request'.
+src/middleware/rateLimiter.ts(2,24): error TS2300: Duplicate identifier 'Response'.
+src/middleware/rateLimiter.ts(2,34): error TS2300: Duplicate identifier 'NextFunction'.
+src/middleware/rateLimiter.ts(2,48): error TS2300: Duplicate identifier 'RequestHandler'.
+src/middleware/rateLimiter.ts(2,70): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/rbac.ts(1,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/middleware/sanitize.ts(1,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/auditoria/auditoria.service.ts(2,41): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/modules/auditoria/auditoria.service.ts(3,43): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/auditoria/auditoria.service.ts(48,35): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+src/modules/auditoria/auditoria.service.ts(49,58): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/modules/auditoria/auditoria.worker.ts(1,34): error TS2307: Cannot find module 'bullmq' or its corresponding type declarations.
+src/modules/auditoria/auditoria.worker.ts(50,24): error TS7006: Parameter 'job' implicitly has an 'any' type.
+src/modules/auditoria/auditoria.worker.ts(50,29): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/modules/auditoria/auditoria.worker.ts(68,23): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(84,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(96,43): error TS2345: Argument of type '{ id: string; cpf: string; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(107,43): error TS2345: Argument of type '{ id: string; cpf: string; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(154,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(158,43): error TS2345: Argument of type '{ id: string; tokenAtivacaoExpira: Date; ativo: boolean; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(168,18): error TS2532: Object is possibly 'undefined'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(168,45): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(187,43): error TS2345: Argument of type '{ id: string; tokenAtivacaoExpira: Date; ativo: boolean; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(199,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(212,43): error TS2345: Argument of type '{ id: string; nome: string; email: string; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(220,18): error TS2532: Object is possibly 'undefined'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(220,45): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.
+src/modules/auth/__tests__/auth.cidadao.service.test.ts(228,43): error TS2345: Argument of type '{ id: string; nome: string; email: string; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.lockout.property.test.ts(40,52): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+src/modules/auth/__tests__/auth.lockout.property.test.ts(41,62): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+src/modules/auth/__tests__/auth.lockout.property.test.ts(46,52): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+src/modules/auth/__tests__/auth.lockout.property.test.ts(49,52): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+src/modules/auth/__tests__/auth.lockout.property.test.ts(54,72): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+src/modules/auth/__tests__/auth.lockout.property.test.ts(60,56): error TS2556: A spread argument must either have a tuple type or be passed to a rest parameter.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(66,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(80,43): error TS2345: Argument of type '{ id: string; nome: string; email: string; }' is not assignable to parameter of type 'null'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(103,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(113,45): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(114,12): error TS18048: 'call' is possibly 'undefined'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(115,12): error TS18048: 'call' is possibly 'undefined'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(117,12): error TS18048: 'call' is possibly 'undefined'.
+src/modules/auth/__tests__/auth.recuperacao.service.test.ts(118,12): error TS18048: 'call' is possibly 'undefined'.
+src/modules/auth/auth.2fa.service.ts(2,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/auth/auth.2fa.service.ts(3,28): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.controller.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.login.service.ts(1,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.login.service.ts(2,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.router.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.service.ts(2,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.service.ts(3,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/auth/auth.cidadao.service.ts(4,28): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/modules/auth/auth.recuperacao.service.ts(2,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+src/modules/auth/auth.recuperacao.service.ts(3,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/auth/auth.recuperacao.service.ts(4,28): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/modules/auth/auth.router.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/auth/auth.servidor.controller.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/auth/auth.servidor.router.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/auth/auth.servidor.service.ts(1,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+src/modules/categorias/categorias.controller.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/categorias/categorias.router.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/categorias/categorias.router.ts(2,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/categorias/categorias.service.ts(1,46): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/categorias/categorias.service.ts(101,6): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/modules/categorias/categorias.service.ts(158,14): error TS2488: Type 'Categoria[] | null' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/modules/tipos-processo/__tests__/tipos.service.test.ts(19,46): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+src/modules/tipos-processo/__tests__/tipos.service.test.ts(20,22): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+src/modules/tipos-processo/tipos.controller.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/tipos-processo/tipos.router.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/tipos-processo/tipos.router.ts(2,54): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/tipos-processo/tipos.service.ts(1,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/unidades/__tests__/unidades.service.test.ts(160,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/unidades/__tests__/unidades.service.test.ts(214,20): error TS2322: Type 'VitestUtils' is not assignable to type 'Awaitable<HookCleanupCallback>'.
+src/modules/unidades/unidades.controller.ts(1,40): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/unidades/unidades.router.ts(1,24): error TS2307: Cannot find module 'express' or its corresponding type declarations.
+src/modules/unidades/unidades.service.ts(2,35): error TS2307: Cannot find module '@prisma/client' or its corresponding type declarations.
+src/modules/unidades/unidades.service.ts(3,28): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+src/modules/unidades/unidades.service.ts(70,40): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+src/utils/protocolo.ts(1,24): error TS2307: Cannot find module 'ioredis' or its corresponding type declarations.
+../../packages/shared/src/index.ts(5,15): error TS6059: File 'E:/Auditar/packages/shared/src/types/index.ts' is not under 'rootDir' 'E:/Auditar/apps/api/src'. 'rootDir' is expected to contain all source files.
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(5,15): error TS6307: File 'E:/Auditar/packages/shared/src/types/index.ts' is not listed within the file list of project 'E:/Auditar/apps/api/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(6,15): error TS6059: File 'E:/Auditar/packages/shared/src/constants/index.ts' is not under 'rootDir' 'E:/Auditar/apps/api/src'. 'rootDir' is expected to contain all source files.
+  The file is in the program because:
+    Imported via './constants/index.js' from file 'E:/Auditar/packages/shared/src/index.ts'
+    Imported via '../constants/index.js' from file 'E:/Auditar/packages/shared/src/schemas/index.ts'
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(6,15): error TS6307: File 'E:/Auditar/packages/shared/src/constants/index.ts' is not listed within the file list of project 'E:/Auditar/apps/api/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  The file is in the program because:
+    Imported via './constants/index.js' from file 'E:/Auditar/packages/shared/src/index.ts'
+    Imported via '../constants/index.js' from file 'E:/Auditar/packages/shared/src/schemas/index.ts'
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(7,15): error TS6059: File 'E:/Auditar/packages/shared/src/schemas/index.ts' is not under 'rootDir' 'E:/Auditar/apps/api/src'. 'rootDir' is expected to contain all source files.
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(7,15): error TS6307: File 'E:/Auditar/packages/shared/src/schemas/index.ts' is not listed within the file list of project 'E:/Auditar/apps/api/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(8,15): error TS6059: File 'E:/Auditar/packages/shared/src/utils/index.ts' is not under 'rootDir' 'E:/Auditar/apps/api/src'. 'rootDir' is expected to contain all source files.
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"
+../../packages/shared/src/index.ts(8,15): error TS6307: File 'E:/Auditar/packages/shared/src/utils/index.ts' is not listed within the file list of project 'E:/Auditar/apps/api/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+  File is ECMAScript module because 'E:/Auditar/packages/shared/package.json' has field "type" with value "module"

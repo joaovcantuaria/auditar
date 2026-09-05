@@ -1,0 +1,135 @@
+# ─────────────────────────────────────────────
+# Auditar — orquestração de serviços de desenvolvimento
+# (Compose v2: a chave "version" é obsoleta e foi removida)
+# ─────────────────────────────────────────────
+services:
+  # ─────────────────────────────────────────────
+  # PostgreSQL 15
+  # ─────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: auditar_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - auditar_net
+
+  # ─────────────────────────────────────────────
+  # Redis 7
+  # ─────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: auditar_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --appendonly yes
+      --appendfsync everysec
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - auditar_net
+
+  # ─────────────────────────────────────────────
+  # Mailpit — captura de e-mails em desenvolvimento
+  # SMTP em 1025 (usado pela API) e interface web em 8025.
+  # ─────────────────────────────────────────────
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: auditar_mailpit
+    restart: unless-stopped
+    ports:
+      - '1025:1025'   # SMTP (SMTP_PORT no .env)
+      - '8025:8025'   # Interface web (http://localhost:8025)
+    networks:
+      - auditar_net
+
+  # ─────────────────────────────────────────────
+  # MinIO (S3-compatible object storage)
+  # ─────────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: auditar_minio
+    restart: unless-stopped
+    command: server /data --console-address ':${MINIO_CONSOLE_PORT:-9001}'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - '${MINIO_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - auditar_net
+
+  # ─────────────────────────────────────────────
+  # MinIO bucket initializer (runs once)
+  # Creates the default 'processos' bucket
+  # ─────────────────────────────────────────────
+  minio_init:
+    image: minio/mc:latest
+    container_name: auditar_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_PORT: ${MINIO_PORT:-9000}
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:$$MINIO_PORT $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+        mc mb --ignore-existing local/processos &&
+        mc anonymous set none local/processos &&
+        echo 'MinIO bucket initialised.' &&
+        exit 0
+      "
+    networks:
+      - auditar_net
+
+# ─────────────────────────────────────────────
+# Named volumes (persistent data)
+# ─────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+
+# ─────────────────────────────────────────────
+# Internal network
+# ─────────────────────────────────────────────
+networks:
+  auditar_net:
+    driver: bridge

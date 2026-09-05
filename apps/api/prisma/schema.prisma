@@ -1,0 +1,471 @@
+// Auditar - Sistema de Gestão de Processos
+// Prisma schema completo
+// Referências de requisitos: 1, 4, 5, 8, 10, 12, 13, 17, 21
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Cidadão
+// ---------------------------------------------------------------------------
+
+model Cidadao {
+  id                  String    @id @default(uuid())
+  nome                String    @db.VarChar(150)
+  cpf                 String    @unique @db.Char(11)
+  email               String    @unique @db.VarChar(254)
+  telefone            String    @db.VarChar(11)
+  logradouro          String    @db.VarChar(200)
+  numero              String    @db.VarChar(20)
+  cep                 String    @db.Char(8)
+  cidade              String    @db.VarChar(100)
+  estado              String    @db.Char(2)
+  senhaHash           String
+  ativo               Boolean   @default(false)
+  emailConfirmado     Boolean   @default(false)
+  tokenAtivacao       String?
+  tokenAtivacaoExpira DateTime?
+  tentativasLogin     Int       @default(0)
+  bloqueadoAte        DateTime?
+  doisFatoresAtivo    Boolean   @default(false)
+  doisFatoresCanal    String?
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
+
+  processos    Processo[]
+  notificacoes Notificacao[]
+  preferencias PreferenciaNotificacao[]
+  mensagens    Mensagem[]
+  acessos      AcessoHistorico[]
+}
+
+// ---------------------------------------------------------------------------
+// Servidor
+// ---------------------------------------------------------------------------
+
+model Servidor {
+  id              String    @id @default(uuid())
+  nome            String    @db.VarChar(150)
+  cpf             String    @unique @db.Char(11)
+  email           String    @unique @db.VarChar(254)
+  telefone        String?   @db.VarChar(11)
+  senhaHash       String
+  nivelAcesso     Int
+  ativo           Boolean   @default(true)
+  senhaTemporaria Boolean   @default(true)
+  tentativasLogin Int       @default(0)
+  bloqueadoAte    DateTime?
+  unidadeId       String
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+
+  unidade         Unidade                @relation(fields: [unidadeId], references: [id])
+  permissoes      PermissaoServidor[]
+  processos       Processo[]             @relation("ServidorResponsavel")
+  mensagens       Mensagem[]
+  movimentacoes   MovimentacaoProcesso[]
+  tarefasCriadas    Tarefa[]           @relation("TarefaCriadoPor")
+  tarefaAtribuicoes TarefaAtribuicao[] @relation("TarefaAtribuicaoServidor")
+}
+
+model PermissaoServidor {
+  id         String  @id @default(uuid())
+  servidorId String
+  permissao  String
+  concedida  Boolean
+
+  servidor Servidor @relation(fields: [servidorId], references: [id])
+
+  @@index([servidorId])
+}
+
+// ---------------------------------------------------------------------------
+// Unidade
+// ---------------------------------------------------------------------------
+
+model Unidade {
+  id                   String   @id @default(uuid())
+  nome                 String
+  secretaria           String
+  endereco             String?
+  telefone             String?
+  horarioFuncionamento String?
+  ativa                Boolean  @default(true)
+  modoAtribuicao       String   @default("manual")
+  gestorId             String?
+  prefixoProtocolo     String?  @db.VarChar(5) // Sigla opcional para prefixo de Protocolo (Req. 4.8a)
+  criadoEm             DateTime @default(now())
+
+  servidores   Servidor[]
+  processos    Processo[]
+  tiposProcesso TipoProcessoUnidade[]
+  formularios  FormularioDinamico[]
+}
+
+// ---------------------------------------------------------------------------
+// Categoria
+// ---------------------------------------------------------------------------
+
+model Categoria {
+  id         String   @id @default(uuid())
+  nome       String
+  descricao  String?
+  icone      String?
+  cor        String?
+  secretaria String?
+  ativa      Boolean  @default(true)
+  gestorId   String?
+  prefixoProtocolo String? @db.VarChar(5) // Sigla opcional para prefixo de Protocolo (Req. 4.8a)
+  criadoEm   DateTime @default(now())
+
+  tiposProcesso TipoProcesso[]
+}
+
+// ---------------------------------------------------------------------------
+// Tipo de Processo
+// ---------------------------------------------------------------------------
+
+model TipoProcesso {
+  id                  String   @id @default(uuid())
+  nome                String
+  prazoTotalDiasUteis Int
+  ativo               Boolean  @default(true)
+  categoriaId         String
+  fluxoId             String?
+  criadoEm            DateTime @default(now())
+
+  categoria   Categoria             @relation(fields: [categoriaId], references: [id])
+  fluxo       Fluxo?                @relation(fields: [fluxoId], references: [id])
+  processos   Processo[]
+  formularios FormularioDinamico[]
+  unidades    TipoProcessoUnidade[]
+
+  @@index([categoriaId])
+}
+
+model TipoProcessoUnidade {
+  tipoProcessoId String
+  unidadeId      String
+
+  tipoProcesso TipoProcesso @relation(fields: [tipoProcessoId], references: [id])
+  unidade      Unidade      @relation(fields: [unidadeId], references: [id])
+
+  @@id([tipoProcessoId, unidadeId])
+  @@index([unidadeId])
+}
+
+// ---------------------------------------------------------------------------
+// Fluxo e Etapa
+// ---------------------------------------------------------------------------
+
+model Fluxo {
+  id          String   @id @default(uuid())
+  nome        String
+  versao      Int      @default(1)
+  criadoEm    DateTime @default(now())
+  criadoPorId String
+
+  etapas        Etapa[]
+  tiposProcesso TipoProcesso[]
+  processos     Processo[]     @relation("FluxoVersao")
+}
+
+model Etapa {
+  id               String   @id @default(uuid())
+  nome             String
+  prazosDiasUteis  Int
+  ordem            Int
+  fluxoId          String
+  servidorPadraoId String?
+  criadoEm         DateTime @default(now())
+
+  fluxo      Fluxo       @relation(fields: [fluxoId], references: [id])
+  automacoes Automacao[]
+  processos  Processo[]
+
+  @@index([fluxoId])
+}
+
+model Automacao {
+  id      String @id @default(uuid())
+  etapaId String
+  tipo    String
+  payload String
+
+  etapa Etapa @relation(fields: [etapaId], references: [id])
+
+  @@index([etapaId])
+}
+
+// ---------------------------------------------------------------------------
+// Formulário Dinâmico
+// ---------------------------------------------------------------------------
+
+model FormularioDinamico {
+  id             String   @id @default(uuid())
+  tipoProcessoId String
+  unidadeId      String
+  ativo          Boolean  @default(true)
+  criadoEm       DateTime @default(now())
+  criadoPorId    String
+
+  tipoProcesso TipoProcesso      @relation(fields: [tipoProcessoId], references: [id])
+  unidade      Unidade           @relation(fields: [unidadeId], references: [id])
+  campos       CampoFormulario[]
+
+  @@index([tipoProcessoId])
+  @@index([unidadeId])
+}
+
+model CampoFormulario {
+  id                String  @id @default(uuid())
+  formularioId      String
+  tipo              String
+  rotulo            String
+  descricaoAuxiliar String?
+  obrigatorio       Boolean
+  validacao         String?
+  valorPadrao       String?
+  ordem             Int
+  opcoes            Json?
+
+  formulario FormularioDinamico @relation(fields: [formularioId], references: [id])
+
+  @@index([formularioId])
+}
+
+// ---------------------------------------------------------------------------
+// Processo
+// ---------------------------------------------------------------------------
+
+model Processo {
+  id                    String    @id @default(uuid())
+  protocolo             String    @unique @db.VarChar(10)
+  status                String
+  prioridade            Int       @default(0)
+  cidadaoId             String
+  tipoProcessoId        String
+  unidadeId             String
+  servidorResponsavelId String?
+  etapaAtualId          String?
+  fluxoVersaoId         String
+  abertoEm              DateTime  @default(now())
+  prazoFinal            DateTime
+  encerradoEm           DateTime?
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @updatedAt
+
+  cidadao             Cidadao                @relation(fields: [cidadaoId], references: [id])
+  tipoProcesso        TipoProcesso           @relation(fields: [tipoProcessoId], references: [id])
+  unidade             Unidade                @relation(fields: [unidadeId], references: [id])
+  servidorResponsavel Servidor?              @relation("ServidorResponsavel", fields: [servidorResponsavelId], references: [id])
+  etapaAtual          Etapa?                 @relation(fields: [etapaAtualId], references: [id])
+  fluxoVersao         Fluxo                  @relation("FluxoVersao", fields: [fluxoVersaoId], references: [id])
+  respostas           RespostaFormulario[]
+  movimentacoes       MovimentacaoProcesso[]
+  documentos          Documento[]
+  mensagens           Mensagem[]
+  tarefas             Tarefa[]
+
+  @@index([status])
+  @@index([unidadeId])
+  @@index([servidorResponsavelId])
+  @@index([cidadaoId])
+  @@index([protocolo])
+}
+
+model RespostaFormulario {
+  id        String @id @default(uuid())
+  processoId String
+  campoId   String
+  valor     String
+
+  processo Processo @relation(fields: [processoId], references: [id])
+
+  @@index([processoId])
+}
+
+model MovimentacaoProcesso {
+  id             String   @id @default(uuid())
+  processoId     String
+  etapaOrigemId  String?
+  etapaDestinoId String?
+  servidorId     String
+  observacao     String?
+  tipoObservacao String? // "publica" | "interna" | null
+  realizadoEm    DateTime @default(now())
+
+  processo Processo @relation(fields: [processoId], references: [id])
+  servidor Servidor @relation(fields: [servidorId], references: [id])
+
+  @@index([processoId])
+  @@index([servidorId])
+}
+
+// ---------------------------------------------------------------------------
+// Documento
+// ---------------------------------------------------------------------------
+
+model Documento {
+  id                String   @id @default(uuid())
+  processoId        String
+  nomeOriginal      String
+  mimeType          String
+  tamanhoBytes      Int
+  caminhoStorage    String
+  enviadoPorCidadao Boolean
+  enviadoPorId      String
+  enviadoEm         DateTime @default(now())
+
+  processo Processo @relation(fields: [processoId], references: [id])
+
+  @@index([processoId])
+}
+
+// ---------------------------------------------------------------------------
+// Mensagem
+// ---------------------------------------------------------------------------
+
+model Mensagem {
+  id                    String    @id @default(uuid())
+  processoId            String
+  canal                 String // "publico" | "interno"
+  conteudo              String
+  remetenteCidadaoId    String?
+  remetenteServidorId   String?
+  destinatarioServidorId String?
+  caminhoAnexo          String?
+  enviadaEm             DateTime  @default(now())
+  lida                  DateTime?
+
+  processo         Processo  @relation(fields: [processoId], references: [id])
+  remetenteCidadao Cidadao?  @relation(fields: [remetenteCidadaoId], references: [id])
+  remetenteServidor Servidor? @relation(fields: [remetenteServidorId], references: [id])
+
+  @@index([processoId])
+  @@index([canal])
+}
+
+// ---------------------------------------------------------------------------
+// Notificação
+// ---------------------------------------------------------------------------
+
+model Notificacao {
+  id           String    @id @default(uuid())
+  cidadaoId    String?
+  servidorId   String?
+  tipoEvento   String
+  canal        String
+  conteudo     String
+  entregue     Boolean   @default(false)
+  tentativas   Int       @default(0)
+  agendadaPara DateTime?
+  entregueEm   DateTime?
+  criadaEm     DateTime  @default(now())
+
+  cidadao Cidadao? @relation(fields: [cidadaoId], references: [id])
+
+  @@index([cidadaoId])
+  @@index([servidorId])
+  @@index([entregue])
+}
+
+model PreferenciaNotificacao {
+  id             String   @id @default(uuid())
+  cidadaoId      String
+  tipoEvento     String
+  canais         String[]
+  inicioSilencio String?
+  fimSilencio    String?
+
+  cidadao Cidadao @relation(fields: [cidadaoId], references: [id])
+
+  @@index([cidadaoId])
+}
+
+// ---------------------------------------------------------------------------
+// Auditoria
+// ---------------------------------------------------------------------------
+
+model AuditoriaLog {
+  id             String   @id @default(uuid())
+  ator           String // "cidadao" | "servidor"
+  atorCidadaoId  String?
+  atorServidorId String?
+  enderecoIp     String
+  tipoAcao       String
+  modulo         String
+  objetoId       String?
+  tipoObjeto     String?
+  valorAnterior  String?  @db.VarChar(1000)
+  valorPosterior String?  @db.VarChar(1000)
+  realizadaEmUtc DateTime @default(now())
+
+  @@index([tipoAcao])
+  @@index([atorCidadaoId])
+  @@index([atorServidorId])
+  @@index([objetoId])
+  @@index([realizadaEmUtc])
+}
+
+model AcessoHistorico {
+  id         String   @id @default(uuid())
+  cidadaoId  String?
+  servidorId String?
+  enderecoIp String
+  acessadoEm DateTime @default(now())
+
+  cidadao Cidadao? @relation(fields: [cidadaoId], references: [id])
+
+  @@index([cidadaoId])
+  @@index([servidorId])
+}
+
+// ---------------------------------------------------------------------------
+// Tarefa (Req. 27 — Organizador de Tarefas)
+// ---------------------------------------------------------------------------
+
+model Tarefa {
+  id           String             @id @default(uuid())
+  titulo       String             @db.VarChar(150)
+  descricao    String?            @db.VarChar(2000)
+  status       String             @default("pendente") // StatusTarefa (status agregado da Tarefa)
+  prioridade   Int?               // 0=baixa, 1=média, 2=alta (opcional)
+  criadoPorId  String
+  criadoPor    Servidor           @relation("TarefaCriadoPor", fields: [criadoPorId], references: [id])
+  processoId   String?
+  processo     Processo?          @relation(fields: [processoId], references: [id])
+  prazo        DateTime
+  criadoEm     DateTime           @default(now())
+  atualizadoEm DateTime           @updatedAt
+  atribuicoes  TarefaAtribuicao[]
+
+  @@index([criadoPorId])
+  @@index([processoId])
+  @@index([prazo])
+}
+
+model TarefaAtribuicao {
+  id                    String    @id @default(uuid())
+  tarefaId              String
+  tarefa                Tarefa    @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+  servidorId            String
+  servidor              Servidor  @relation("TarefaAtribuicaoServidor", fields: [servidorId], references: [id])
+  status                String    @default("pendente") // StatusTarefa individual por destinatário
+  notificadoProximidade Boolean   @default(false) // idempotência da notificação de proximidade
+  notificadoVencida     Boolean   @default(false) // idempotência da notificação de vencida
+  concluidaEm           DateTime?
+  criadoEm              DateTime  @default(now())
+  atualizadoEm          DateTime  @updatedAt
+
+  @@unique([tarefaId, servidorId]) // uma atribuição por servidor por tarefa (Req. 27.4)
+  @@index([servidorId])
+  @@index([status])
+  @@index([tarefaId])
+}
