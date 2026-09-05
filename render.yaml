@@ -33,8 +33,7 @@ services:
       npm run build --workspace @auditar/shared &&
       npm run prisma:generate --workspace @auditar/api &&
       npm run build --workspace @auditar/api &&
-      npm run prisma:migrate:deploy --workspace @auditar/api &&
-      npm run prisma:seed --workspace @auditar/api
+      npm run prisma:migrate:deploy --workspace @auditar/api
 
     # Start: `node dist/index.js` (script `start` do @auditar/api).
     startCommand: npm run start --workspace @auditar/api
