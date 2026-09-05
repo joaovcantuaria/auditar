@@ -1,4 +1,4 @@
-import type Redis from 'ioredis';
+import type { Redis } from 'ioredis';
 import { formatarProtocolo } from '@auditar/shared';
 
 /** Objeto genérico que pode fornecer um prefixo de protocolo (Unidade/Categoria). */

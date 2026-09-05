@@ -1,4 +1,6 @@
-import Redis, { type RedisOptions } from 'ioredis';
+// Import nomeado da classe `Redis` (compatível com NodeNext ESM). O import
+// default do ioredis resolve como namespace e não é construível sob NodeNext.
+import { Redis, type RedisOptions } from 'ioredis';
 import { env } from './env.js';
 
 /**

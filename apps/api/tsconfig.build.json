@@ -1,0 +1,44 @@
+{
+  // -------------------------------------------------------------------------
+  // Config de BUILD de PRODUÇÃO da API (usada por `tsc -p tsconfig.build.json`).
+  //
+  // Diferenças em relação ao tsconfig.json (usado pelo editor/dev):
+  //  - NÃO define `paths` para o código-fonte do @auditar/shared. Em produção a
+  //    API importa o pacote JÁ COMPILADO (node_modules/@auditar/shared/dist,
+  //    buildado ANTES no render.yaml), resolvido via `exports`/`types` do
+  //    package.json do shared. Isso evita arrastar o fonte do shared para o
+  //    build (erros TS6059/TS6307 fora do rootDir).
+  //  - Sem `composite` (evita exigência de project references e .tsbuildinfo).
+  //  - Exclui todos os testes do emit de produção (TS6133/TS1309/TS2322 em mocks).
+  //  - Saída ESM (module/target NodeNext/ES2022) — o código usa `import.meta`
+  //    + `createRequire` + imports com sufixo `.js`, logo é ESM. O package.json
+  //    da API declara `"type": "module"` para que `node dist/index.js` rode ESM.
+  // -------------------------------------------------------------------------
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "strict": true,
+    "declaration": false,
+    // O tsconfig raiz liga `declarationMap`; sem `declaration`/`composite` isso
+    // é inválido (TS5069). Desligamos aqui — produção não precisa de .d.ts.map.
+    "declarationMap": false,
+    // Sobrescreve o `composite`/`incremental` herdados do tsconfig raiz: o build
+    // de produção só precisa emitir JS, sem project references.
+    "composite": false,
+    "incremental": false
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "src/test/**"
+  ]
+}

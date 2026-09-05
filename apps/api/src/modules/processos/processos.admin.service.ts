@@ -184,21 +184,24 @@ export function montarWhere(filtros: FiltrosAdmin = {}): Prisma.ProcessoWhereInp
     };
   }
 
+  // Filtros sobre a relação `cidadao` (nome parcial + CPF). Acumula em um
+  // objeto tipado `Prisma.CidadaoWhereInput` para preservar a tipagem correta
+  // do filtro de relação (evita o colapso de inferência ao fazer spread do
+  // `where.cidadao`, que sob NodeNext resultava em TS2322).
+  const cidadaoWhere: Prisma.CidadaoWhereInput = {};
+
   // Nome do cidadão: correspondência parcial case-insensitive.
   if (filtros.nomeCidadao) {
-    where.cidadao = {
-      ...(where.cidadao ?? {}),
-      nome: { contains: filtros.nomeCidadao, mode: 'insensitive' },
-    };
+    cidadaoWhere.nome = { contains: filtros.nomeCidadao, mode: 'insensitive' };
   }
 
   // CPF do cidadão: normalizado para dígitos.
   if (filtros.cpfCidadao) {
-    const cpf = desformatarCPF(filtros.cpfCidadao);
-    where.cidadao = {
-      ...(where.cidadao ?? {}),
-      cpf,
-    };
+    cidadaoWhere.cpf = desformatarCPF(filtros.cpfCidadao);
+  }
+
+  if (Object.keys(cidadaoWhere).length > 0) {
+    where.cidadao = cidadaoWhere;
   }
 
   return where;

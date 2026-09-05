@@ -260,7 +260,9 @@ export async function desativar(
   const processosImpactados = await prisma.processo.count({
     where: {
       tipoProcessoId: id,
-      status: { notIn: STATUS_TERMINAIS },
+      // Spread para converter o `readonly string[]` no `string[]` mutável que
+      // o filtro `notIn` do Prisma espera.
+      status: { notIn: [...STATUS_TERMINAIS] },
     },
   });
 

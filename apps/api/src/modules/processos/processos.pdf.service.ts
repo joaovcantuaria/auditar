@@ -167,7 +167,8 @@ export async function carregarDadosPdf(
 
   const documentos = (await d.prisma.documento.findMany({
     where: { processoId },
-    orderBy: { enviadaEm: 'asc' },
+    // Modelo Documento usa `enviadoEm` (não `enviadaEm`, que é do Mensagem).
+    orderBy: { enviadoEm: 'asc' },
     select: { nomeOriginal: true },
   })) as DocumentoRow[];
 

@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import type { PrismaClient, Prisma } from '@prisma/client';
-import type Redis from 'ioredis';
+import type { Redis } from 'ioredis';
 import { ErrorCodes, StatusProcesso, TipoEvento } from '@auditar/shared';
 import {
   badRequest,

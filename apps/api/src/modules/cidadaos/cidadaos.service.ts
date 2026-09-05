@@ -9,10 +9,7 @@ import { badRequest, notFound, validarCPF, desformatarCPF, formatarCPF } from '.
 import { registrar as realRegistrar } from '../auditoria/index.js';
 import type { RegistrarAuditoriaDto } from '../auditoria/index.js';
 import { enviarConfirmacaoNovoEmail } from './cidadaos.email.js';
-import type {
-  EditarPerfilInput,
-  AlterarSenhaInput,
-} from './cidadaos.schema.js';
+import type { EditarPerfilInput } from './cidadaos.schema.js';
 
 /**
  * Serviço de Gestão de Conta do Cidadão (Req. 7).

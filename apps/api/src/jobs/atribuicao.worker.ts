@@ -96,7 +96,11 @@ export function atribuicaoQueue() {
  * Lazy: calling this opens the Redis connection; importing the module does not.
  */
 export function createAtribuicaoWorker(): Worker<AtribuicaoJob> {
-  return new Worker<AtribuicaoJob>(ATRIBUICAO_QUEUE_NAME, processarAtribuicao, {
+  // Envolve em arrow que passa só o `job`: a assinatura de `processarAtribuicao`
+  // tem um 2º parâmetro opcional de injeção (testes) que é incompatível com o
+  // `token: string` esperado pelo `Processor` do BullMQ (mesmo padrão do
+  // notificacao/relatorio worker).
+  return new Worker<AtribuicaoJob>(ATRIBUICAO_QUEUE_NAME, (job) => processarAtribuicao(job), {
     connection: bullmqConnection,
   });
 }

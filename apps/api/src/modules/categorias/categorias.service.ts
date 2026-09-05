@@ -278,7 +278,9 @@ export async function contarProcessosEmAndamento(
   const { prisma } = resolveDeps(deps);
   return prisma.processo.count({
     where: {
-      status: { notIn: STATUS_ENCERRADOS },
+      // Spread para converter o `readonly string[]` no `string[]` mutável que
+      // o filtro `notIn` do Prisma espera.
+      status: { notIn: [...STATUS_ENCERRADOS] },
       tipoProcesso: { categoriaId },
     },
   });
