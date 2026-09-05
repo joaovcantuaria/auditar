@@ -29,7 +29,7 @@ services:
     # em producao (migrate deploy, NUNCA migrate dev).
     # -------------------------------------------------------------------------
     buildCommand: >-
-      npm ci &&
+      npm ci --include=dev &&
       npm run build --workspace @auditar/shared &&
       npm run prisma:generate --workspace @auditar/api &&
       npm run build --workspace @auditar/api &&
