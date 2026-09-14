@@ -45,6 +45,10 @@ const envSchema = z.object({
   SERVER_SESSION_TIMEOUT_MIN: z.coerce.number().default(60),
   CITIZEN_SESSION_TIMEOUT_MIN: z.coerce.number().default(30),
   MAX_ADMINS: z.coerce.number().default(3),
+  // Token do endpoint TEMPORÁRIO de setup/seed (POST|GET /api/v1/setup/seed).
+  // Quando ausente, o endpoint fica DESABILITADO (responde 404). Quando
+  // definido, exige `?token=` idêntico para autorizar a execução do seed.
+  SETUP_TOKEN: z.string().optional(),
 });
 
 // Parse with safe parse to get better error messages in development

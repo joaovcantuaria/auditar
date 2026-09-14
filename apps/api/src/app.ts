@@ -32,8 +32,14 @@ import { dashboardRouter } from './modules/dashboard/index.js';
 import { relatoriosRouter } from './modules/relatorios/index.js';
 import { auditoriaRouter } from './modules/auditoria/index.js';
 import { tarefasRouter } from './modules/tarefas/index.js';
+// Endpoint TEMPORÁRIO de setup/seed (protegido por SETUP_TOKEN) — ver módulo.
+import { setupRouter } from './modules/setup/setup.router.js';
 
 const app = express();
+
+// Atrás de um proxy (Render/Vercel/etc.), confiar no primeiro proxy para que o
+// express-rate-limit identifique corretamente o IP via X-Forwarded-For.
+app.set('trust proxy', 1);
 
 // Security headers
 app.use(helmet());
@@ -128,6 +134,9 @@ apiRouter.use('/admin/dashboard', dashboardRouter);
 apiRouter.use('/admin/relatorios', relatoriosRouter);
 apiRouter.use('/admin/auditoria', auditoriaRouter);
 apiRouter.use('/admin/tarefas', tarefasRouter);
+
+// Setup TEMPORÁRIO — seed sob demanda protegido por SETUP_TOKEN. Sem JWT.
+apiRouter.use('/setup', setupRouter);
 
 app.use('/api/v1', apiRouter);
 
