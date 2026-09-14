@@ -31,8 +31,6 @@ Thumbs.db
 *.njsproj
 *.sln
 
-# Prisma
-apps/api/prisma/migrations/
 
 # Coverage
 coverage/
