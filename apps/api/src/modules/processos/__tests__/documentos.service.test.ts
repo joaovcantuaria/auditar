@@ -15,6 +15,7 @@ import {
   confirmarUpload,
   gerarDownloadUrl,
   listarDocumentos,
+  verificarAcessoProcesso,
   sanitizeFilename,
   FORMATOS_PERMITIDOS,
   MAX_FILE_BYTES,
@@ -79,6 +80,7 @@ beforeEach(() => {
   presignedGetObject.mockResolvedValue('https://minio.local/get-fake-url');
   documentoMock.aggregate.mockResolvedValue({ _sum: { tamanhoBytes: 0 } });
   documentoMock.count.mockResolvedValue(0);
+  processoMock.findUnique.mockResolvedValue({ unidadeId: UNIDADE_ID, cidadaoId: 'cid-1' });
 });
 
 // ---------------------------------------------------------------------------
@@ -326,10 +328,96 @@ describe('gerarDownloadUrl', () => {
     expect(presignedGetObject).not.toHaveBeenCalled();
   });
 
+  it('rejeita com 404 quando o documento é de outro processo que o da URL', async () => {
+    documentoMock.findUnique.mockResolvedValue(documentoComProcesso('cid-1'));
+
+    await expect(
+      gerarDownloadUrl(DOCUMENTO_ID, 'cid-1', deps(), 'outro-processo'),
+    ).rejects.toMatchObject({ statusCode: 404 });
+
+    expect(presignedGetObject).not.toHaveBeenCalled();
+  });
+
   it('rejeita com 404 quando o documento não existe', async () => {
     documentoMock.findUnique.mockResolvedValue(null);
 
     await expect(gerarDownloadUrl('doc-inexistente', 'cid-1', deps())).rejects.toMatchObject({
+      statusCode: 404,
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// confirmarUpload — validação do caminho de armazenamento
+// ---------------------------------------------------------------------------
+
+describe('confirmarUpload — caminhoStorage', () => {
+  it.each([
+    ['de outro processo', `processos/${UNIDADE_ID}/proc-de-outro/uuid-x.pdf`],
+    ['de outra unidade', `processos/uni-outra/${PROCESSO_ID}/uuid-x.pdf`],
+    ['com subpasta', `processos/${UNIDADE_ID}/${PROCESSO_ID}/../proc-2/x.pdf`],
+    ['vazio após o prefixo', `processos/${UNIDADE_ID}/${PROCESSO_ID}/`],
+    ['fora do bucket do processo', 'relatorios/qualquer.pdf'],
+  ])('rejeita caminho %s', async (_desc, caminho) => {
+    await expect(
+      confirmarUpload(PROCESSO_ID, arquivoValido(), caminho, 'cid-1', true, ATOR_CIDADAO, deps()),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(documentoMock.create).not.toHaveBeenCalled();
+  });
+
+  it('rejeita arquivo com formato inválido também na confirmação', async () => {
+    await expect(
+      confirmarUpload(
+        PROCESSO_ID,
+        arquivoValido({ nomeOriginal: 'script.exe', mimeType: 'application/octet-stream' }),
+        `processos/${UNIDADE_ID}/${PROCESSO_ID}/uuid-script.exe`,
+        'cid-1',
+        true,
+        ATOR_CIDADAO,
+        deps(),
+      ),
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(documentoMock.create).not.toHaveBeenCalled();
+  });
+
+  it('rejeita com 404 quando o processo não existe', async () => {
+    processoMock.findUnique.mockResolvedValue(null);
+    await expect(
+      confirmarUpload(
+        PROCESSO_ID,
+        arquivoValido(),
+        `processos/${UNIDADE_ID}/${PROCESSO_ID}/uuid-x.pdf`,
+        'cid-1',
+        true,
+        ATOR_CIDADAO,
+        deps(),
+      ),
+    ).rejects.toMatchObject({ statusCode: 404 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// verificarAcessoProcesso
+// ---------------------------------------------------------------------------
+
+describe('verificarAcessoProcesso', () => {
+  it('permite o cidadão dono do processo', async () => {
+    await expect(verificarAcessoProcesso(PROCESSO_ID, 'cid-1', deps())).resolves.toBeUndefined();
+  });
+
+  it('responde 404 para cidadão que não é o dono', async () => {
+    await expect(verificarAcessoProcesso(PROCESSO_ID, 'cid-intruso', deps())).rejects.toMatchObject({
+      statusCode: 404,
+    });
+  });
+
+  it('permite servidor (sem cidadão) quando o processo existe', async () => {
+    await expect(verificarAcessoProcesso(PROCESSO_ID, undefined, deps())).resolves.toBeUndefined();
+  });
+
+  it('responde 404 quando o processo não existe', async () => {
+    processoMock.findUnique.mockResolvedValue(null);
+    await expect(verificarAcessoProcesso(PROCESSO_ID, undefined, deps())).rejects.toMatchObject({
       statusCode: 404,
     });
   });

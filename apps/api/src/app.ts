@@ -13,7 +13,8 @@ import { conta2faRouter } from './modules/cidadaos/conta2fa.router.js';
 import {
   processosCidadaoRouter,
   processosDetalheRouter,
-  documentosRouter,
+  documentosCidadaoRouter,
+  documentosServidorRouter,
   mensagensCidadaoRouter,
   mensagensServidorRouter,
   mensagensInternoRouter,
@@ -103,7 +104,7 @@ apiRouter.use('/cidadao/conta', conta2faRouter);
 // para previsibilidade.
 apiRouter.use('/processos', processosCidadaoRouter);
 apiRouter.use('/processos', processosDetalheRouter);
-apiRouter.use('/processos/:id/documentos', documentosRouter);
+apiRouter.use('/processos/:id/documentos', documentosCidadaoRouter);
 apiRouter.use('/processos/:id/mensagens', mensagensCidadaoRouter);
 
 // Formulários públicos — GET / (por tipoId + unidadeId).
@@ -114,7 +115,7 @@ apiRouter.use('/formularios', formulariosPublicRouter);
 apiRouter.use('/admin/processos', processosAdminRouter);
 apiRouter.use('/admin/processos', processosTramitacaoRouter);
 apiRouter.use('/admin/processos', processosAtribuicaoRouter);
-apiRouter.use('/admin/processos/:id/documentos', documentosRouter);
+apiRouter.use('/admin/processos/:id/documentos', documentosServidorRouter);
 apiRouter.use('/admin/processos/:id/mensagens', mensagensServidorRouter);
 apiRouter.use('/admin/processos/:id/mensagens/internas', mensagensInternoRouter);
 

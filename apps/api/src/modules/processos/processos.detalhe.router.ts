@@ -15,7 +15,7 @@ import {
  *
  * Este router deve ser montado (pelo agregador de rotas) em
  * `/api/v1/processos`, ao lado de `processosCidadaoRouter` (tarefa 7.1, que
- * cobre `GET /` e `POST /`) e de `documentosRouter` (tarefa 7.2, montado em
+ * cobre `GET /` e `POST /`) e de `documentosCidadaoRouter` (tarefa 7.2, montado em
  * `/:id/documentos` — aba Documentos). A composição final desses três
  * routers sob o mesmo prefixo é responsabilidade do agregador, não desta
  * tarefa.

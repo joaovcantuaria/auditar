@@ -37,7 +37,7 @@ function resolveAtor(req: Request): AtorDocumento {
 }
 
 /** Mapeia um erro conhecido para uma resposta HTTP; loga e responde 500 caso contrário. */
-function handleError(err: unknown, res: Response): void {
+export function handleDocumentosError(err: unknown, res: Response): void {
   if (err instanceof ZodError) {
     const first = err.errors[0];
     res.status(400).json({
@@ -79,7 +79,7 @@ export async function postGerarUploadUrl(req: Request, res: Response): Promise<v
     const resultado = await gerarUploadUrl(processoId, unidadeId, arquivo, resolveAtor(req));
     res.status(200).json(resultado);
   } catch (err) {
-    handleError(err, res);
+    handleDocumentosError(err, res);
   }
 }
 
@@ -107,7 +107,7 @@ export async function postConfirmarDocumento(req: Request, res: Response): Promi
     );
     res.status(201).json(documento);
   } catch (err) {
-    handleError(err, res);
+    handleDocumentosError(err, res);
   }
 }
 
@@ -122,10 +122,15 @@ export async function postConfirmarDocumento(req: Request, res: Response): Promi
 export async function getDownloadUrl(req: Request, res: Response): Promise<void> {
   try {
     const solicitanteCidadaoId = req.user?.role === 'cidadao' ? req.user.sub : undefined;
-    const resultado = await gerarDownloadUrl(req.params.docId, solicitanteCidadaoId);
+    const resultado = await gerarDownloadUrl(
+      req.params.docId,
+      solicitanteCidadaoId,
+      undefined,
+      req.params.id,
+    );
     res.status(200).json(resultado);
   } catch (err) {
-    handleError(err, res);
+    handleDocumentosError(err, res);
   }
 }
 
@@ -140,6 +145,6 @@ export async function getDocumentos(req: Request, res: Response): Promise<void> 
     const documentos = await listarDocumentos(req.params.id);
     res.status(200).json({ data: documentos });
   } catch (err) {
-    handleError(err, res);
+    handleDocumentosError(err, res);
   }
 }

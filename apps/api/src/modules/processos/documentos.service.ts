@@ -212,6 +212,43 @@ export async function obterUnidadeDoProcesso(
   return (processo as { unidadeId: string }).unidadeId;
 }
 
+/**
+ * Garante que o Processo existe e, quando o solicitante é um cidadão, que o
+ * Processo pertence a ele. Responde 404 (não 403) em ambos os casos para não
+ * revelar a existência de Processos de terceiros — mesmo padrão do detalhe.
+ *
+ * Servidores (`solicitanteCidadaoId === undefined`) são autorizados pelo RBAC
+ * na camada de rota.
+ *
+ * @throws {AppError} 404 — Processo inexistente ou de outro cidadão.
+ */
+export async function verificarAcessoProcesso(
+  processoId: string,
+  solicitanteCidadaoId: string | undefined,
+  deps?: Partial<DocumentosDeps>,
+): Promise<void> {
+  const d = resolveDeps(deps);
+  const processo = (await d.prisma.processo.findUnique({
+    where: { id: processoId },
+    select: { cidadaoId: true },
+  })) as { cidadaoId: string } | null;
+
+  if (
+    !processo ||
+    (solicitanteCidadaoId !== undefined && processo.cidadaoId !== solicitanteCidadaoId)
+  ) {
+    throw notFound(ErrorCodes.VALIDATION_ERROR, 'Processo não encontrado');
+  }
+}
+
+/**
+ * Prefixo obrigatório do caminho de armazenamento de um Processo, conforme
+ * montado em `gerarUploadUrl`.
+ */
+export function prefixoStorageDoProcesso(unidadeId: string, processoId: string): string {
+  return `processos/${unidadeId}/${processoId}/`;
+}
+
 // ---------------------------------------------------------------------------
 // Upload (Req. 4.5, 4.7, 5.4)
 // ---------------------------------------------------------------------------
@@ -274,7 +311,7 @@ export async function gerarUploadUrl(
     );
   }
 
-  const caminhoStorage = `processos/${unidadeId}/${processoId}/${randomUUID()}-${sanitizeFilename(arquivo.nomeOriginal)}`;
+  const caminhoStorage = `${prefixoStorageDoProcesso(unidadeId, processoId)}${randomUUID()}-${sanitizeFilename(arquivo.nomeOriginal)}`;
 
   const uploadUrl = await d.minio.presignedPutObject(
     env.MINIO_BUCKET_PROCESSOS,
@@ -302,7 +339,35 @@ export async function confirmarUpload(
   ator: AtorDocumento,
   deps?: Partial<DocumentosDeps>,
 ): Promise<Documento> {
+  validarArquivo(arquivo);
+
   const d = resolveDeps(deps);
+
+  // O caminho vem do cliente: só aceitamos objetos dentro da "pasta" deste
+  // Processo, gerada por `gerarUploadUrl`. Sem isso, seria possível vincular a
+  // este Processo um arquivo de OUTRO Processo e depois baixá-lo.
+  const processo = (await d.prisma.processo.findUnique({
+    where: { id: processoId },
+    select: { unidadeId: true },
+  })) as { unidadeId: string } | null;
+  if (!processo) {
+    throw notFound(ErrorCodes.VALIDATION_ERROR, 'Processo não encontrado');
+  }
+  const prefixo = prefixoStorageDoProcesso(processo.unidadeId, processoId);
+  const nomeObjeto = caminhoStorage.slice(prefixo.length);
+  if (
+    !caminhoStorage.startsWith(prefixo) ||
+    nomeObjeto.length === 0 ||
+    nomeObjeto.includes('/') ||
+    nomeObjeto.includes('\\') ||
+    nomeObjeto.startsWith('.')
+  ) {
+    throw badRequest(
+      ErrorCodes.VALIDATION_ERROR,
+      'Caminho de armazenamento inválido para este processo',
+      'caminhoStorage',
+    );
+  }
 
   const documento = await d.prisma.documento.create({
     data: {
@@ -363,6 +428,8 @@ export async function gerarDownloadUrl(
   documentoId: string,
   solicitanteCidadaoId: string | undefined,
   deps?: Partial<DocumentosDeps>,
+  /** Processo da URL (`:id`); quando informado, o Documento deve pertencer a ele. */
+  processoId?: string,
 ): Promise<DownloadUrlResult> {
   const d = resolveDeps(deps);
 
@@ -371,7 +438,7 @@ export async function gerarDownloadUrl(
     include: { processo: { select: { cidadaoId: true } } },
   })) as DocumentoComProcesso | null;
 
-  if (!documento) {
+  if (!documento || (processoId !== undefined && documento.processoId !== processoId)) {
     throw notFound(ErrorCodes.VALIDATION_ERROR, 'Documento não encontrado');
   }
 

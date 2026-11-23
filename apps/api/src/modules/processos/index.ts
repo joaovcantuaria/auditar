@@ -10,7 +10,7 @@ export { processosAdminRouter } from './processos.admin.router.js';
 // Upload/Download de Documentos via MinIO (tarefa 7.2).
 export * from './documentos.service.js';
 export * from './documentos.controller.js';
-export { documentosRouter } from './documentos.router.js';
+export { documentosCidadaoRouter, documentosServidorRouter } from './documentos.router.js';
 
 // Criação e listagem de Processos pelo Cidadão (tarefa 7.1).
 export * from './processos.schema.js';
