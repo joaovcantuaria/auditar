@@ -59,6 +59,13 @@ export interface UseFormularioDinamicoResult {
   refetch: () => void;
 }
 
+/**
+ * Lista vazia ESTÁVEL usada enquanto o formulário não chegou. Um `[]` novo a
+ * cada render mudava a dependência dos efeitos do StepFormulario e causava um
+ * ciclo de re-renderizações ("Maximum update depth exceeded") no carregamento.
+ */
+const SEM_CAMPOS: CampoFormulario[] = [];
+
 /** Executa a chamada HTTP e retorna o formulário com campos. */
 async function fetchFormulario(
   tipoProcessoId: string,
@@ -88,7 +95,7 @@ export function useFormularioDinamico({
 
   return {
     formulario: query.data,
-    campos: query.data?.campos ?? [],
+    campos: query.data?.campos ?? SEM_CAMPOS,
     isLoading: habilitado && query.isLoading,
     isError: query.isError,
     refetch: () => {

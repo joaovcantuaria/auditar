@@ -243,6 +243,8 @@ export function useSocket(): void {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   useEffect(() => {
+    // Modo demonstração não tem servidor de tempo real.
+    if (import.meta.env.VITE_DEMO_MODE === 'true') return undefined;
     if (!isAuthenticated) {
       // Sem sessão: garante que qualquer conexão anterior seja encerrada.
       disconnectSocket();

@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:demo": "vite --mode demo",
     "build": "vite build",
+    "build:demo": "vite build --mode demo",
     "build:typecheck": "tsc -p tsconfig.build.json && vite build",
     "preview": "vite preview",
     "test": "vitest",
